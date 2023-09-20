@@ -55,7 +55,7 @@ static void MX_TIM2_Init(void);
 void display7SEG(int);
 const int MAX_LED = 4;
 int index_led = 0;
-int led_buffer[4] = {1, 2, 2, 1};
+int led_buffer[4] = {6, 2, 8, 9};
 void update7SEG(int);
 
 /* USER CODE END PFP */
