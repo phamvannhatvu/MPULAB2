@@ -31,7 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define LED7_DURATION 50
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -99,7 +99,6 @@ int main(void)
   HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_SET);
   while (1)
   {
-	  display7SEG(2);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -232,7 +231,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 int counter = 100;
-int scanning_counter = 50;
+int scanning_counter = LED7_DURATION;
 int led_enabled = 0;
 
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
@@ -249,9 +248,11 @@ void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 	{
 	case 0:
 		HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_RESET);
+		display7SEG(1);
 		if (scanning_counter <= 0)
 		{
-			scanning_counter = 50;
+			display7SEG(2);
+			scanning_counter = LED7_DURATION;
 			led_enabled = 1;
 			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_RESET);
@@ -259,9 +260,11 @@ void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 		break;
 	case 1:
 		HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_RESET);
+		display7SEG(2);
 		if (scanning_counter <= 0)
 		{
-			scanning_counter = 50;
+			display7SEG(1);
+			scanning_counter = LED7_DURATION;
 			led_enabled = 0;
 			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_RESET);
