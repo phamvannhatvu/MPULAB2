@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#define LED7_DURATION 50
+#define LED7_DURATION 25
 #define DOT_DURATION 100
 /* USER CODE END Includes */
 
