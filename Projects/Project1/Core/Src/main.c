@@ -43,7 +43,11 @@
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
-
+int led_test_counter = 100;
+int led_test_flag = 0;
+int scanning_counter = LED7_DURATION;
+int scanning_flag = 0;
+int led_enabled = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,8 +104,40 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
+	if (led_test_flag == 1)
+	{
+		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		led_test_flag = 0;
+	}
+
+	switch (led_enabled)
+	{
+	case 0:
+		HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_RESET);
+		display7SEG(1);
+		if (scanning_flag == 1)
+		{
+			display7SEG(2);
+			scanning_flag = 0;
+			led_enabled = 1;
+			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_RESET);
+		}
+		break;
+	case 1:
+		HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_RESET);
+		display7SEG(2);
+		if (scanning_flag == 1)
+		{
+			display7SEG(1);
+			scanning_flag = 0;
+			led_enabled = 0;
+			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_RESET);
+		}
+		break;
+	}
   }
   /* USER CODE END 3 */
 }
@@ -230,46 +266,21 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int counter = 100;
-int scanning_counter = LED7_DURATION;
-int led_enabled = 0;
 
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 {
-	--counter;
-	if (counter <= 0)
+	--led_test_counter;
+	if (led_test_counter <= 0)
 	{
-		counter = 100;
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		led_test_counter = 100;
+		led_test_flag = 1;
 	}
 
 	--scanning_counter;
-	switch (led_enabled)
+	if (scanning_counter <= 0)
 	{
-	case 0:
-		HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_RESET);
-		display7SEG(1);
-		if (scanning_counter <= 0)
-		{
-			display7SEG(2);
-			scanning_counter = LED7_DURATION;
-			led_enabled = 1;
-			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_RESET);
-		}
-		break;
-	case 1:
-		HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_RESET);
-		display7SEG(2);
-		if (scanning_counter <= 0)
-		{
-			display7SEG(1);
-			scanning_counter = LED7_DURATION;
-			led_enabled = 0;
-			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_RESET);
-		}
-		break;
+		scanning_counter = LED7_DURATION;
+		scanning_flag = 1;
 	}
 }
 
