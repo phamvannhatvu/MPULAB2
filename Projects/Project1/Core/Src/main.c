@@ -107,6 +107,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  update7SEG(index_led);
   while (1)
   {
 	++second;
