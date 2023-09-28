@@ -51,6 +51,7 @@ int dot_flag = 0;
 int scanning_counter = LED7_DURATION;
 int scanning_flag = 0;
 int led_enabled = 0;
+int hour = 15, minute = 8, second = 50;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,7 +64,7 @@ const int MAX_LED = 4;
 int index_led = 0;
 int led_buffer[4] = {6, 2, 8, 9};
 void update7SEG(int);
-
+void updateClockBuffer();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -106,31 +107,47 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  update7SEG(index_led);
   while (1)
   {
-	if (led_test_flag == 1)
+	++second;
+	if (second >= 60)
 	{
-		led_test_flag = 0;
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		second = 0;
+		++minute;
 	}
-
-	if (dot_flag == 1)
+	if (minute >= 60)
 	{
-		dot_flag = 0;
-		HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
+		minute = 0;
+		++hour;
 	}
-
-	if (scanning_flag == 1)
+	if (hour >= 24)
 	{
-		++index_led;
-		if (index_led >= MAX_LED)
-		{
-			index_led = 0;
-		}
-		update7SEG(index_led);
-		scanning_flag = 0;
+		hour = 0;
 	}
+	updateClockBuffer();
+	HAL_Delay(100);
+//	if (led_test_flag == 1)
+//	{
+//		led_test_flag = 0;
+//		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+//	}
+//
+//	if (dot_flag == 1)
+//	{
+//		dot_flag = 0;
+//		HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
+//	}
+//
+//	if (scanning_flag == 1)
+//	{
+//		++index_led;
+//		if (index_led >= MAX_LED)
+//		{
+//			index_led = 0;
+//		}
+//		update7SEG(index_led);
+//		scanning_flag = 0;
+//	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -265,6 +282,13 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void updateClockBuffer()
+{
+	led_buffer[0] = hour / 10;
+	led_buffer[1] = hour % 10;
+	led_buffer[2] = minute / 10;
+	led_buffer[3] = minute % 10;
+}
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 {
 	--led_test_counter;
