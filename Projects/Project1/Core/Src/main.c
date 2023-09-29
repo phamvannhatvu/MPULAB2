@@ -112,12 +112,14 @@ int main(void)
 	if (led_test_flag == 1)
 	{
 		led_test_flag = 0;
+        led_test_counter = 100;
 		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 	}
 
 	if (dot_flag == 1)
 	{
 		dot_flag = 0;
+        dot_counter = DOT_DURATION;
 		HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
 	}
 
@@ -130,6 +132,7 @@ int main(void)
 		}
 		update7SEG(index_led);
 		scanning_flag = 0;
+        scanning_counter = LED7_DURATION;
 	}
     /* USER CODE END WHILE */
 
@@ -270,21 +273,18 @@ void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 	--led_test_counter;
 	if (led_test_counter <= 0)
 	{
-		led_test_counter = 100;
 		led_test_flag = 1;
 	}
 
 	--dot_counter;
 	if (dot_counter <= 0)
 	{
-		dot_counter = DOT_DURATION;
 		dot_flag = 1;
 	}
 
 	--scanning_counter;
 	if (scanning_counter <= 0)
 	{
-		scanning_counter = LED7_DURATION;
 		scanning_flag = 1;
 	}
 }
