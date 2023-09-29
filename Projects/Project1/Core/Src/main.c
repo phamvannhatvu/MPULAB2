@@ -126,29 +126,29 @@ int main(void)
 		hour = 0;
 	}
 	updateClockBuffer();
-	HAL_Delay(100);
-//	if (led_test_flag == 1)
-//	{
-//		led_test_flag = 0;
-//		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-//	}
-//
-//	if (dot_flag == 1)
-//	{
-//		dot_flag = 0;
-//		HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
-//	}
-//
-//	if (scanning_flag == 1)
-//	{
-//		++index_led;
-//		if (index_led >= MAX_LED)
-//		{
-//			index_led = 0;
-//		}
-//		update7SEG(index_led);
-//		scanning_flag = 0;
-//	}
+	HAL_Delay(1000);
+	if (led_test_flag == 1)
+	{
+		led_test_flag = 0;
+		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+	}
+
+	if (dot_flag == 1)
+	{
+		dot_flag = 0;
+		HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
+	}
+
+	if (scanning_flag == 1)
+	{
+		++index_led;
+		if (index_led >= MAX_LED)
+		{
+			index_led = 0;
+		}
+		update7SEG(index_led);
+		scanning_flag = 0;
+	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
