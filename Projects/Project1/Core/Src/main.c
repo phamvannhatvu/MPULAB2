@@ -109,6 +109,7 @@ int main(void)
 	{
 		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 		led_test_flag = 0;
+        led_test_counter = 100;
 	}
 
 	switch (led_enabled)
@@ -120,6 +121,7 @@ int main(void)
 		{
 			display7SEG(2);
 			scanning_flag = 0;
+	        scanning_counter = LED7_DURATION;
 			led_enabled = 1;
 			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_RESET);
@@ -132,6 +134,7 @@ int main(void)
 		{
 			display7SEG(1);
 			scanning_flag = 0;
+	        scanning_counter = LED7_DURATION;
 			led_enabled = 0;
 			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, GPIO_PIN_RESET);
@@ -272,14 +275,12 @@ void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 	--led_test_counter;
 	if (led_test_counter <= 0)
 	{
-		led_test_counter = 100;
 		led_test_flag = 1;
 	}
 
 	--scanning_counter;
 	if (scanning_counter <= 0)
 	{
-		scanning_counter = LED7_DURATION;
 		scanning_flag = 1;
 	}
 }
