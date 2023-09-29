@@ -69,7 +69,24 @@ void updateClockBuffer();
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+int timer0_counter = 0;
+int timer0_flag = 0;
+int TIMER_CYCLE = 10;
 
+void setTimer0(int duration)
+{
+	timer0_counter = duration / TIMER_CYCLE;
+	timer0_flag = 0;
+}
+
+void timer_run()
+{
+	if (timer0_counter > 0)
+	{
+		timer0_counter--;
+		if (timer0_counter == 0) timer0_flag = 1;
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -108,47 +125,53 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   update7SEG(index_led);
+  setTimer0(10);
   while (1)
   {
-	++second;
-	if (second >= 60)
+	if (timer0_flag == 1)
 	{
-		second = 0;
-		++minute;
-	}
-	if (minute >= 60)
-	{
-		minute = 0;
-		++hour;
-	}
-	if (hour >= 24)
-	{
-		hour = 0;
-	}
-	updateClockBuffer();
-	HAL_Delay(1000);
-	if (led_test_flag == 1)
-	{
-		led_test_flag = 0;
 		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		setTimer0(2000);
 	}
-
-	if (dot_flag == 1)
-	{
-		dot_flag = 0;
-		HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
-	}
-
-	if (scanning_flag == 1)
-	{
-		++index_led;
-		if (index_led >= MAX_LED)
-		{
-			index_led = 0;
-		}
-		update7SEG(index_led);
-		scanning_flag = 0;
-	}
+//	++second;
+//	if (second >= 60)
+//	{
+//		second = 0;
+//		++minute;
+//	}
+//	if (minute >= 60)
+//	{
+//		minute = 0;
+//		++hour;
+//	}
+//	if (hour >= 24)
+//	{
+//		hour = 0;
+//	}
+//	updateClockBuffer();
+//	HAL_Delay(1000);
+//	if (led_test_flag == 1)
+//	{
+//		led_test_flag = 0;
+//		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+//	}
+//
+//	if (dot_flag == 1)
+//	{
+//		dot_flag = 0;
+//		HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
+//	}
+//
+//	if (scanning_flag == 1)
+//	{
+//		++index_led;
+//		if (index_led >= MAX_LED)
+//		{
+//			index_led = 0;
+//		}
+//		update7SEG(index_led);
+//		scanning_flag = 0;
+//	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -292,6 +315,8 @@ void updateClockBuffer()
 }
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 {
+	timer_run();
+
 	--led_test_counter;
 	if (led_test_counter <= 0)
 	{
