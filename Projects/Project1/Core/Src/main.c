@@ -111,6 +111,23 @@ void timerMatrixRun()
 		if (timer_matrix_counter == 0) timer_matrix_flag = 1;
 	}
 }
+
+int timer_shift_counter = 0;
+int timer_shift_flag = 0;
+void setTimerShift(int duration)
+{
+	timer_shift_counter = duration / TIMER_CYCLE;
+	timer_shift_flag = 0;
+}
+
+void timerShiftRun()
+{
+	if (timer_shift_counter > 0)
+	{
+		--timer_shift_counter;
+		if (timer_shift_counter == 0) timer_shift_flag = 1;
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -150,10 +167,22 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   setTimer0(1000);
   setTimerMatrix(100);
+  setTimerShift(1600);
   updateClockBuffer();
   update7SEG(index_led);
   while (1)
   {
+	if (timer_shift_flag == 1)
+	{
+		  int matrix_buffer7 = matrix_buffer[7];
+		  for (int i = 6; i >= 0; --i)
+		  {
+			  matrix_buffer[i + 1] = matrix_buffer[i];
+		  }
+		  matrix_buffer[0] = matrix_buffer7;
+		  setTimerShift(1600);
+	}
+
 	if (timer_matrix_flag == 1)
 	{
 		updateLEDMatrix(index_led_matrix);
@@ -366,6 +395,7 @@ void updateClockBuffer()
 }
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 {
+	timerShiftRun();
 	timerMatrixRun();
 	timer_run();
 
